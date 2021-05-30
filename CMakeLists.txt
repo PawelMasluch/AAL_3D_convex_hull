@@ -6,6 +6,6 @@ cmake_minimum_required (VERSION 3.8)
 project ("AAL")
 
 # Add source to this project's executable.
-add_executable (AAL "AAL.cpp" "AAL.h")
+add_executable (AAL "Naive.cpp"  "Naive.h")
 
 # TODO: Add tests and install targets if needed.
