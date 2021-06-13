@@ -245,7 +245,11 @@ double Plane::V(const Plane &pi, const Point &P){
 	Vector AC( pi.get_ith_point(0), pi.get_ith_point(2) );
 	Vector AP( pi.get_ith_point(0), P );
 	
-	return 1./6. * ( (AB * AC) ^ AP );
+	//std::cout << "AB: " << AB << std::endl << "AC: " << AC << std::endl << "AP: " << AP << std::endl;
+	
+	//std::cout << (AB*AC) << std::endl;
+	
+	return 1./6. * ( AP ^ (AB * AC) );
 }
 
 

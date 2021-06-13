@@ -149,11 +149,14 @@ void compute(){
 	Faces.push_back( pi ); // pi3
 	
 	
-	/*std::ofstream abc("out2.txt");
+	//std::ofstream abc("out2.txt");
+	/*
+	std::cout << "\nPoczatkowe sciany:\n";
 	REP(x,0,3){
-		abc << Faces[x] << std::endl;
+		std::cout << Faces[x] << std::endl << std::endl;
 	}
-	abc.close();
+	//abc.close();
+	std::cout << std::endl;
 	*/
 	
 	
@@ -165,9 +168,16 @@ void compute(){
 	// Dla kazdego nastepnego punktu wyznaczymy nowe przyblizenie otoczki wypuklej
 	REP(i,4,n-1){
 		
-		int visible_faces = 0; // number of visible faces from P[i]
+		//std::cout << "Punkt nr " << i << std::endl;
+		
+		
+		
+		int visible_faces = 0; // liczba widocznych scian z perspektywy punktu P[i]
 		
 		int noFaces = Faces.size(); // liczba scian aktualnego przyblizenia otoczki wypuklej
+		
+		//std::cout << noFaces << std::endl;
+		
 		std::vector <bool> visible(noFaces, false); // visible[j] - czy j-ta sciana widoczna z aktualnego punktu P[i]?
 		
 		
@@ -177,14 +187,25 @@ void compute(){
 			if( is_face_in_hull[j] == true ){
 				double Volume = Plane::V( Faces[j], P[i] );
 				
+				//std::cout << "\n\nSciana nr " << j << ":\n" << Faces[j] << P[i] << Volume << std::endl;
+				
 				if( Volume < 0. ){
 					++visible_faces;
 					visible[j] = true;
+					
+					//std::cout << "sciana nr " << j << " jest widoczna" << std::endl;
+		
+					
+				}
+				else{
+					//std::cout << "sciana nr " << j << " nie jest widoczna" << std::endl;
 				}
 			}
 		}
 		
-		if( visible_faces > 0 ){ // jesli istnieja widoczne sciany
+		//std::cout << std::endl;
+		
+		if( visible_faces > 0 ){ // jesli istnieja widoczne sciany z perspektywy punktu P[i]
 			int noEdges = Edges.size();
 			
 			// kazda krawedz
@@ -192,14 +213,27 @@ void compute(){
 				int face0 = Edges[j].get_ith_face_number(0);
 				int face1 = Edges[j].get_ith_face_number(1);
 				
-				if(   (face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false)   ||   (face0 > -1 && visible[face0] == false && face1 > -1 && visible[face1] == true)   ){
+				//std::cout << face0 << " " << face1 << ": ";
+				
+				if(   (face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true  )   ||   (face0 > -1 && visible[face0] == false && face1 > -1 && visible[face1] == true && is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true)   ){
 					
 					// Usuwanie sciany
-					if(face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false){
+					if(face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true){
 						is_face_in_hull[face0] = false;
+						
+						//std::cout << "Usuniecie sciany nr " << face0 << ":\n";
+						//std::cout << Faces[face0] << std::endl;
+						
+						//std::cout << "trafienie\n";
+						
 					}
 					else{
 						is_face_in_hull[face1] = false;
+						
+						//std::cout << "Usuniecie sciany nr " << face1 << ":\n";
+						//std::cout << Faces[face1] << std::endl;
+						
+						//std::cout << "nietrafienie\n";
 					}
 					
 					
@@ -217,7 +251,7 @@ void compute(){
 	
 					// Edges[j]
 					REP(k,0,2-1){
-						if( Edges[j].get_ith_face_number(k) > -1 && visible[Edges[j].get_ith_face_number(k)] == true ){
+						if( Edges[j].get_ith_face_number(k) > -1 && visible[Edges[j].get_ith_face_number(k)] == true  &&  is_face_in_hull[ Edges[j].get_ith_face_number(k) ] == true ){
 							Edges[j].set_ith_face_number(k, face_counter);
 							break;
 						}
@@ -263,6 +297,23 @@ void compute(){
 				}
 			}
 		}
+		
+		
+		
+		// Kontrolne sprawdzenie
+		/*
+		std::cout << "\n\nPo analizie punktu nr " << i << ":\n";
+		REP(j,0,Faces.size()-1){
+			if( is_face_in_hull[j] == true ){
+				std::cout << Faces[j] << std::endl;
+			}
+		}
+		std::cout << std::endl;
+		*/
+		
+		
+		// Czyszczenie
+		visible.clear();
 	}	
 }
 
@@ -295,11 +346,42 @@ void save_result(){
 }
 
 
-int main(int argc, char** argv){
+/*
+void compute1(){
+	/*
+	Point P1(0,0,0);
+	Point P2(1,0,0);
+	Point P3(0,1,0);
+	Point DD(0,0,1);
 	
+	Plane pi = Plane::create_plane(P3,P2,P1);
+	
+	double Vol = Plane::V(pi, DD);
+	
+	std::cout << Vol << std::endl;
+	
+	
+	Point P1(0,0,0);
+	Point P2(0,10,0);
+	Point P3(0,0,10);
+	Point DD(2,2,2);
+	
+	Plane pi = Plane::create_plane(P3,P2,P1);
+	
+	double Vol = Plane::V(pi, DD);
+	
+	std::cout << Vol << std::endl;
+}
+*/
+
+
+int main(int argc, char** argv){
 	read_data();
 	compute();
 	save_result();
+	
+	
+	//compute1();
 	
 	return 0;
 }
