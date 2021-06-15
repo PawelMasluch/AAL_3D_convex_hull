@@ -25,7 +25,7 @@ Liczba punktow n >= 4.
 #include "../Voxelization.h"
 
 
-using namespace std;
+//using namespace std;
 
 
 // Przydatne definicje (caly program)
@@ -35,23 +35,10 @@ using namespace std;
 const int MAX_N = 350; // maksymalna liczba punktow
 
 
-vector <Plane> convex_hull;
+std::vector <Plane> convex_hull;
 
 
-void read_data(){
-	
-	ifstream file_in("in.txt");
-	
-	file_in >> n;
-	
-	double x, y, z;
-	REP(i,0,n-1){
-		file_in >> x >> y >> z;
-		P[i].set(x, y, z);
-	}
-	
-	file_in.close();
-}
+
 
 
 void compute(Point* P, int n){
@@ -95,91 +82,79 @@ void compute(Point* P, int n){
 }
 
 
-void save_result(){
-	
-	ofstream file_out("out.txt");
-	
-	int m = convex_hull.size(); // liczba scian otoczki wypuklej
-	file_out << m << endl;
-	
-	REP(i,0,m-1){
-		file_out << convex_hull[i] << endl;
-	}
-	
-	file_out.close();
-}
+
 
 
 int main(int argc, char** argv){
-	string test_data_ball;
-	string test_data_square;
-	string test_data_sphere;
-	ofstream file_ball_points_naive("ball_points_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::string test_data_ball;
+	std::string test_data_square;
+	std::string test_data_sphere;
+	std::ofstream file_ball_points_naive("ball_points_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
-		int n = i * 30;
-		for (int k = 0; i < 5; i++) {	
+		int n = i * 20;
+		for (int k = 0; k < 5; k++) {	
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsBall(n, 10.0);
-			set<Point> set = Voxelize(vector, 1.0);
+			std::vector<Point> vector = GeneratePointsBall(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_ball_points_naive << n << " " << mean_time << endl;
+		file_ball_points_naive << n << " " << mean_time << std::endl;
 	}
 	file_ball_points_naive.close();
 
-	ofstream file_sphere_points_naive("sphere_points_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::ofstream file_sphere_points_naive("sphere_points_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
-		int n = i * 30;
-		for (int k = 0; i < 5; i++) {
+		int n = i * 20;
+		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsSphere(n, 10.0);
-			set<Point> set = Voxelize(vector, 1.0);
+			std::vector<Point> vector = GeneratePointsSphere(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_sphere_points_naive << n << " " << mean_time << endl;
+		file_sphere_points_naive << n << " " << mean_time << std::endl;
 	}
 	file_sphere_points_naive.close();
 
-	ofstream file_cube_points_naive("cube_points_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::ofstream file_cube_points_naive("cube_points_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
-		int n = i * 30;
-		for (int k = 0; i < 5; i++) {
+		int n = i * 20;
+		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsCube(n, 10.0);
-			set<Point> set = Voxelize(vector, 1.0);
+			std::vector<Point> vector = GeneratePointsCube(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_cube_points_naive << n << " " << mean_time << endl;
+		file_cube_points_naive << n << " " << mean_time << std::endl;
 	}
 	file_cube_points_naive.close();
 
@@ -187,81 +162,81 @@ int main(int argc, char** argv){
 
 
 
-	ofstream file_ball_size_naive("ball_size_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::ofstream file_ball_size_naive("ball_size_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
 		int n = 100;
-		for (int k = 0; i < 5; i++) {
+		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsBall(n, 10.0);
-			set<Point> set = Voxelize(vector, 0.3*n);
+			std::vector<Point> vector = GeneratePointsBall(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3*n);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_ball_size_naive << n << " " << mean_time << endl;
+		file_ball_size_naive << n << " " << mean_time << std::endl;
 	}
 	file_ball_size_naive.close();
 
-	ofstream file_sphere_size_naive("sphere_size_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::ofstream file_sphere_size_naive("sphere_size_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
 		int n = 100;
-		for (int k = 0; i < 5; i++) {
+		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsSphere(n, 10.0);
-			set<Point> set = Voxelize(vector, 0.3 * n);
+			std::vector<Point> vector = GeneratePointsSphere(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3 * n);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_sphere_size_naive << n << " " << mean_time << endl;
+		file_sphere_size_naive << n << " " << mean_time << std::endl;
 	}
 	file_sphere_size_naive.close();
 
-	ofstream file_cube_size_naive("cube_size_naive.txt");
-	for (int i = 0; i < 10; i++) {
+	std::ofstream file_cube_size_naive("cube_size_naive.txt");
+	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
 		int n = 100;
-		for (int k = 0; i < 5; i++) {
+		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-			vector<Point> vextor = GeneratePointsCube(n, 10.0);
-			set<Point> set = Voxelize(vector, 0.3 * n);
+			std::vector<Point> vector = GeneratePointsCube(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3 * n);
 			int j = 0;
-			for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
 				j++;
 			}
 			compute(P, n);
 			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
-			mean_time += elapsed
+			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_cube_size_naive << n << " " << mean_time << endl;
+		file_cube_size_naive << n << " " << mean_time << std::endl;
 	}
 	file_cube_size_naive.close();
 
 
 
 	
-	read_data();
-	compute();
-	save_result();
+	//read_data();
+	//compute();
+	//save_result();
 	
 	return 0;
 }

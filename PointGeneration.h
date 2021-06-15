@@ -1,9 +1,9 @@
 #include <vector>
 #include <iostream>
 #include <random>
-#include <math.h>   
+#include <cmath>   
 #include <set>
-#include "Point.h"
+#include "Naive/Point.h"
 
 #ifndef ICLUDED_POINT_GENEARTION
 #define ICLUDED_POINT_GENEARTION

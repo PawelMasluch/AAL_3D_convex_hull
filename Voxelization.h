@@ -1,4 +1,6 @@
-#include "Point.h"
+#include "Naive/Point.h"
+#include<set>
+#include<cmath>
 
 #ifndef ICLUDED_VOXELIZATION
 #define ICLUDED_VOXELIZATION
