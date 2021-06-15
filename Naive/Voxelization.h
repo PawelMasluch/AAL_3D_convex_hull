@@ -3,9 +3,9 @@
 #ifndef ICLUDED_VOXELIZATION
 #define ICLUDED_VOXELIZATION
 
-std::set<Point> Voxelize(std::set<Point> points, double voxelSize) {
+std::set<Point> Voxelize(std::vector<Point> points, double voxelSize) {
 	std::set<Point> result;
-	for (std::set<Point>::iterator it = points.begin(); it != points.end(); ++it) {
+	for (std::vector<Point>::iterator it = points.begin(); it != points.end(); ++it) {
 		double x = it->get_x();
 		double y = it->get_y();
 		double z = it->get_z();

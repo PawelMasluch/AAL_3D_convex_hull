@@ -16,6 +16,7 @@ Dodatkowo, liczba punktow n >= 4.
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #include "Point.h"
 #include "Vector.h"
@@ -31,34 +32,18 @@ Dodatkowo, liczba punktow n >= 4.
 
 
 
-const int MAX_N = 300; // maksymalna liczba punktow
+const int MAX_N = 33000; // maksymalna liczba punktow
 
 
-int n;
-Point P[MAX_N];
 std::vector <Plane> Faces; // wygenerowane sciany w czasie algorytmu
 std::vector <bool> is_face_in_hull(6, true); // is_face_in_hull[i] - czy i-ta sciana nalezy do otoczki wypuklej?
 std::vector <Edge> Edges; // krawedzie otoczki wypuklej
 
 
-void read_data(){
-	
-	std::ifstream file_in("in.txt");
-	
-	file_in >> n;
-	
-	double x, y, z;
-	REP(i,0,n-1){
-		file_in >> x >> y >> z;
-		P[i].set(x, y, z);
-	}
-	
-	file_in.close();
-}
 
 
 // Wlasciwy algorytm
-void compute(){
+void compute(Point* P, int n){
 	
 	Edge e01, e02, e03, e12, e13, e23;
 	
@@ -151,15 +136,7 @@ void compute(){
 	Faces.push_back( pi ); // pi3
 	
 	
-	//std::ofstream abc("out2.txt");
-	/*
-	std::cout << "\nPoczatkowe sciany:\n";
-	REP(x,0,3){
-		std::cout << Faces[x] << std::endl << std::endl;
-	}
-	//abc.close();
-	std::cout << std::endl;
-	*/
+	
 	
 	
 	int edge_counter = 6; // numer kolejnej (do dodania) krawedzi
@@ -170,15 +147,12 @@ void compute(){
 	// Dla kazdego nastepnego punktu wyznaczymy nowe przyblizenie otoczki wypuklej
 	REP(i,4,n-1){
 		
-		//std::cout << "Punkt nr " << i << std::endl;
 		
 		
 		
 		int visible_faces = 0; // liczba widocznych scian z perspektywy punktu P[i]
 		
 		int noFaces = Faces.size(); // liczba scian aktualnego przyblizenia otoczki wypuklej
-		
-		//std::cout << noFaces << std::endl;
 		
 		std::vector <bool> visible(noFaces, false); // visible[j] - czy j-ta sciana widoczna z aktualnego punktu P[i]?
 		
@@ -189,23 +163,15 @@ void compute(){
 			if( is_face_in_hull[j] == true ){
 				double Volume = Plane::V( Faces[j], P[i] );
 				
-				//std::cout << "\n\nSciana nr " << j << ":\n" << Faces[j] << P[i] << Volume << std::endl;
-				
 				if( Volume < 0. ){
 					++visible_faces;
 					visible[j] = true;
 					
-					//std::cout << "sciana nr " << j << " jest widoczna" << std::endl;
-		
 					
-				}
-				else{
-					//std::cout << "sciana nr " << j << " nie jest widoczna" << std::endl;
+					
 				}
 			}
 		}
-		
-		//std::cout << std::endl;
 		
 		if( visible_faces > 0 ){ // jesli istnieja widoczne sciany z perspektywy punktu P[i]
 			int noEdges = Edges.size();
@@ -215,27 +181,14 @@ void compute(){
 				int face0 = Edges[j].get_ith_face_number(0);
 				int face1 = Edges[j].get_ith_face_number(1);
 				
-				//std::cout << face0 << " " << face1 << ": ";
-				
 				if(   (face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true  )   ||   (face0 > -1 && visible[face0] == false && face1 > -1 && visible[face1] == true && is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true)   ){
 					
 					// Usuwanie sciany
 					if(face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true){
-						is_face_in_hull[face0] = false;
-						
-						//std::cout << "Usuniecie sciany nr " << face0 << ":\n";
-						//std::cout << Faces[face0] << std::endl;
-						
-						//std::cout << "trafienie\n";
-						
+						is_face_in_hull[face0] = false;	
 					}
 					else{
 						is_face_in_hull[face1] = false;
-						
-						//std::cout << "Usuniecie sciany nr " << face1 << ":\n";
-						//std::cout << Faces[face1] << std::endl;
-						
-						//std::cout << "nietrafienie\n";
 					}
 					
 					
@@ -302,16 +255,6 @@ void compute(){
 		
 		
 		
-		// Kontrolne sprawdzenie
-		/*
-		std::cout << "\n\nPo analizie punktu nr " << i << ":\n";
-		REP(j,0,Faces.size()-1){
-			if( is_face_in_hull[j] == true ){
-				std::cout << Faces[j] << std::endl;
-			}
-		}
-		std::cout << std::endl;
-		*/
 		
 		
 		// Czyszczenie
@@ -320,61 +263,6 @@ void compute(){
 }
 
 
-void save_result(){
-	
-	std::ofstream file_out("out.txt"); // plik wyjsciowy
-	
-	int m = Faces.size(); // liczba scian (nie wszystkie naleza do otoczki)
-	int no_hull_faces = 0; // liczba scian otoczki
-	
-	
-	// Wyznaczenie liczby scian otoczki
-	REP(i,0,m-1){
-		if( is_face_in_hull[i] == true ){
-			++no_hull_faces;
-		}
-	}
-	file_out << no_hull_faces << std::endl;
-	
-	
-	// Wypisanie scian otoczki
-	REP(i,0,m-1){
-		if( is_face_in_hull[i] == true ){
-			file_out << Faces[i] << std::endl;
-		}
-	}
-	
-	file_out.close(); // zamykamy plik wyjsciowy
-}
-
-
-/*
-void compute1(){
-	/*
-	Point P1(0,0,0);
-	Point P2(1,0,0);
-	Point P3(0,1,0);
-	Point DD(0,0,1);
-	
-	Plane pi = Plane::create_plane(P3,P2,P1);
-	
-	double Vol = Plane::V(pi, DD);
-	
-	std::cout << Vol << std::endl;
-	
-	
-	Point P1(0,0,0);
-	Point P2(0,10,0);
-	Point P3(0,0,10);
-	Point DD(2,2,2);
-	
-	Plane pi = Plane::create_plane(P3,P2,P1);
-	
-	double Vol = Plane::V(pi, DD);
-	
-	std::cout << Vol << std::endl;
-}
-*/
 
 
 int main(int argc, char** argv){
@@ -382,7 +270,7 @@ int main(int argc, char** argv){
 	std::ofstream file_ball_points_incremental("ball_points_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = i * 200;
+		int n = i * 3000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -405,7 +293,7 @@ int main(int argc, char** argv){
 	std::ofstream file_sphere_points_incremental("sphere_points_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = i * 200;
+		int n = i * 3000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -428,7 +316,7 @@ int main(int argc, char** argv){
 	std::ofstream file_cube_points_incremental("cube_points_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = i * 200;
+		int n = i * 3000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -455,7 +343,7 @@ int main(int argc, char** argv){
 	std::ofstream file_ball_size_incremental("ball_size_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = 1000;
+		int n = 10000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -478,7 +366,7 @@ int main(int argc, char** argv){
 	std::ofstream file_sphere_size_incremental("sphere_size_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = 1000;
+		int n = 10000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -501,7 +389,7 @@ int main(int argc, char** argv){
 	std::ofstream file_cube_size_incremental("cube_size_incremental.txt");
 	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
-		int n = 1000;
+		int n = 10000;
 		for (int k = 0; k < 5; k++) {
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
