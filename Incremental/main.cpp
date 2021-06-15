@@ -380,7 +380,7 @@ void compute1(){
 int main(int argc, char** argv){
 
 	std::ofstream file_ball_points_incremental("ball_points_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 200;
 		for (int k = 0; k < 5; k++) {
@@ -403,7 +403,7 @@ int main(int argc, char** argv){
 	file_ball_points_incremental.close();
 
 	std::ofstream file_sphere_points_incremental("sphere_points_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 200;
 		for (int k = 0; k < 5; k++) {
@@ -426,7 +426,7 @@ int main(int argc, char** argv){
 	file_sphere_points_incremental.close();
 
 	std::ofstream file_cube_points_incremental("cube_points_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 200;
 		for (int k = 0; k < 5; k++) {
@@ -453,7 +453,7 @@ int main(int argc, char** argv){
 
 
 	std::ofstream file_ball_size_incremental("ball_size_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 1000;
 		for (int k = 0; k < 5; k++) {
@@ -476,7 +476,7 @@ int main(int argc, char** argv){
 	file_ball_size_incremental.close();
 
 	std::ofstream file_sphere_size_incremental("sphere_size_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 1000;
 		for (int k = 0; k < 5; k++) {
@@ -499,7 +499,7 @@ int main(int argc, char** argv){
 	file_sphere_size_incremental.close();
 
 	std::ofstream file_cube_size_incremental("cube_size_incremental.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 1000;
 		for (int k = 0; k < 5; k++) {

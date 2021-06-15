@@ -88,7 +88,7 @@ void compute(Point* P, int n){
 int main(int argc, char** argv){
 
 	std::ofstream file_ball_points_naive("ball_points_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 20;
 		for (int k = 0; k < 5; k++) {	
@@ -111,7 +111,7 @@ int main(int argc, char** argv){
 	file_ball_points_naive.close();
 
 	std::ofstream file_sphere_points_naive("sphere_points_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 20;
 		for (int k = 0; k < 5; k++) {
@@ -134,7 +134,7 @@ int main(int argc, char** argv){
 	file_sphere_points_naive.close();
 
 	std::ofstream file_cube_points_naive("cube_points_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = i * 20;
 		for (int k = 0; k < 5; k++) {
@@ -161,7 +161,7 @@ int main(int argc, char** argv){
 
 
 	std::ofstream file_ball_size_naive("ball_size_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 100;
 		for (int k = 0; k < 5; k++) {
@@ -184,7 +184,7 @@ int main(int argc, char** argv){
 	file_ball_size_naive.close();
 
 	std::ofstream file_sphere_size_naive("sphere_size_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 100;
 		for (int k = 0; k < 5; k++) {
@@ -207,7 +207,7 @@ int main(int argc, char** argv){
 	file_sphere_size_naive.close();
 
 	std::ofstream file_cube_size_naive("cube_size_naive.txt");
-	for (int i = 1; i <= 10; i++) {
+	for (int i = 1; i <= 11; i++) {
 		long long mean_time;
 		int n = 100;
 		for (int k = 0; k < 5; k++) {
