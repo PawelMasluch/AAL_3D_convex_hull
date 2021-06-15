@@ -86,9 +86,7 @@ void compute(Point* P, int n){
 
 
 int main(int argc, char** argv){
-	std::string test_data_ball;
-	std::string test_data_square;
-	std::string test_data_sphere;
+
 	std::ofstream file_ball_points_naive("ball_points_naive.txt");
 	for (int i = 1; i <= 10; i++) {
 		long long mean_time;
@@ -231,86 +229,5 @@ int main(int argc, char** argv){
 	}
 	file_cube_size_naive.close();
 
-
-
-	
-	//read_data();
-	//compute();
-	//save_result();
-	
 	return 0;
 }
-
-
-/*
-
-Testy:
-
-
-
-Test #1:
-
-In:
-4
-10 0 0
-0 0 0
-0 10 0
-0 0 10 
-
-
-Out:
-4
-10 0 0 
-0 0 0 
-0 10 0 
-
-10 0 0 
-0 0 0 
-0 0 10 
-
-10 0 0 
-0 10 0 
-0 0 10 
-
-0 0 0 
-0 10 0 
-0 0 10 
-
-
-
-
-Test #2:
-
-In:
-7
-10 0 0
-0 0 0
-0 10 0
-0 0 10
-1 1 1
-0.5 0.5 0.5
-2 2 2
-
-
-Out:
-4
-10 0 0 
-0 0 0 
-0 10 0 
-
-10 0 0 
-0 0 0 
-0 0 10 
-
-10 0 0 
-0 10 0 
-0 0 10 
-
-0 0 0 
-0 10 0 
-0 0 10 
-
-
-
-
-*/
