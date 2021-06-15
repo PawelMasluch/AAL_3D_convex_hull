@@ -21,8 +21,8 @@ Liczba punktow n >= 4.
 #include "Point.h"
 #include "Vector.h"
 #include "Plane.h"
-#include "../PointGeneration.h"
-#include "../Voxelization.h"
+#include "PointGeneration.h"
+#include "Voxelization.h"
 
 
 //using namespace std;
@@ -168,7 +168,7 @@ int main(int argc, char** argv){
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 			std::vector<Point> vector = GeneratePointsBall(n, 10.0);
-			std::set<Point> set = Voxelize(vector, 0.3*n);
+			std::set<Point> set = Voxelize(vector, 0.3*i);
 			int j = 0;
 			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
@@ -179,7 +179,7 @@ int main(int argc, char** argv){
 			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_ball_size_naive << n << " " << mean_time << std::endl;
+		file_ball_size_naive << 0.3*i << " " << mean_time << std::endl;
 	}
 	file_ball_size_naive.close();
 
@@ -191,7 +191,7 @@ int main(int argc, char** argv){
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 			std::vector<Point> vector = GeneratePointsSphere(n, 10.0);
-			std::set<Point> set = Voxelize(vector, 0.3 * n);
+			std::set<Point> set = Voxelize(vector, 0.3 * i);
 			int j = 0;
 			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
@@ -202,7 +202,7 @@ int main(int argc, char** argv){
 			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_sphere_size_naive << n << " " << mean_time << std::endl;
+		file_sphere_size_naive << 0.3 * i << " " << mean_time << std::endl;
 	}
 	file_sphere_size_naive.close();
 
@@ -214,7 +214,7 @@ int main(int argc, char** argv){
 			Point P[MAX_N];
 			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 			std::vector<Point> vector = GeneratePointsCube(n, 10.0);
-			std::set<Point> set = Voxelize(vector, 0.3 * n);
+			std::set<Point> set = Voxelize(vector, 0.3 * i);
 			int j = 0;
 			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
 				P[j] = *it;
@@ -225,7 +225,7 @@ int main(int argc, char** argv){
 			mean_time += elapsed.count();
 		}
 		mean_time /= 5;
-		file_cube_size_naive << n << " " << mean_time << std::endl;
+		file_cube_size_naive << 0.3 * i << " " << mean_time << std::endl;
 	}
 	file_cube_size_naive.close();
 
