@@ -128,3 +128,17 @@ Point Point::operator - (const Point &P) const{
 std::ostream& operator << (std::ostream &out, const Point &P){
     out << P.get_x() << " " << P.get_y() << " " << P.get_z() << std::endl;
 }
+bool operator< (Point const& a, Point const& b) {
+	if (a.X < b.X) {
+		return true;
+	}
+	else if (a.X == b.X) {
+		if (a.Y < b.Y) {
+			return true;
+		}
+		else if (a.Y == b.Y && a.Z < b.Z) {
+			return true;
+		}
+	}
+	return false;
+}

@@ -16,11 +16,14 @@ Dodatkowo, liczba punktow n >= 4.
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #include "Point.h"
 #include "Vector.h"
 #include "Edge.h"
 #include "Plane.h"
+#include "PointGeneration.h"
+#include "Voxelization.h"
 
 
 
@@ -29,34 +32,18 @@ Dodatkowo, liczba punktow n >= 4.
 
 
 
-const int MAX_N = 300; // maksymalna liczba punktow
+const int MAX_N = 33000; // maksymalna liczba punktow
 
 
-int n;
-Point P[MAX_N];
 std::vector <Plane> Faces; // wygenerowane sciany w czasie algorytmu
 std::vector <bool> is_face_in_hull(6, true); // is_face_in_hull[i] - czy i-ta sciana nalezy do otoczki wypuklej?
 std::vector <Edge> Edges; // krawedzie otoczki wypuklej
 
 
-void read_data(){
-	
-	std::ifstream file_in("in.txt");
-	
-	file_in >> n;
-	
-	double x, y, z;
-	REP(i,0,n-1){
-		file_in >> x >> y >> z;
-		P[i].set(x, y, z);
-	}
-	
-	file_in.close();
-}
 
 
 // Wlasciwy algorytm
-void compute(){
+void compute(Point* P, int n){
 	
 	Edge e01, e02, e03, e12, e13, e23;
 	
@@ -149,12 +136,7 @@ void compute(){
 	Faces.push_back( pi ); // pi3
 	
 	
-	/*std::ofstream abc("out2.txt");
-	REP(x,0,3){
-		abc << Faces[x] << std::endl;
-	}
-	abc.close();
-	*/
+	
 	
 	
 	int edge_counter = 6; // numer kolejnej (do dodania) krawedzi
@@ -165,9 +147,13 @@ void compute(){
 	// Dla kazdego nastepnego punktu wyznaczymy nowe przyblizenie otoczki wypuklej
 	REP(i,4,n-1){
 		
-		int visible_faces = 0; // number of visible faces from P[i]
+		
+		
+		
+		int visible_faces = 0; // liczba widocznych scian z perspektywy punktu P[i]
 		
 		int noFaces = Faces.size(); // liczba scian aktualnego przyblizenia otoczki wypuklej
+		
 		std::vector <bool> visible(noFaces, false); // visible[j] - czy j-ta sciana widoczna z aktualnego punktu P[i]?
 		
 		
@@ -180,11 +166,14 @@ void compute(){
 				if( Volume < 0. ){
 					++visible_faces;
 					visible[j] = true;
+					
+					
+					
 				}
 			}
 		}
 		
-		if( visible_faces > 0 ){ // jesli istnieja widoczne sciany
+		if( visible_faces > 0 ){ // jesli istnieja widoczne sciany z perspektywy punktu P[i]
 			int noEdges = Edges.size();
 			
 			// kazda krawedz
@@ -192,11 +181,11 @@ void compute(){
 				int face0 = Edges[j].get_ith_face_number(0);
 				int face1 = Edges[j].get_ith_face_number(1);
 				
-				if(   (face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false)   ||   (face0 > -1 && visible[face0] == false && face1 > -1 && visible[face1] == true)   ){
+				if(   (face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true  )   ||   (face0 > -1 && visible[face0] == false && face1 > -1 && visible[face1] == true && is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true)   ){
 					
 					// Usuwanie sciany
-					if(face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false){
-						is_face_in_hull[face0] = false;
+					if(face0 > -1 && visible[face0] == true && face1 > -1 && visible[face1] == false  &&  is_face_in_hull[face0] == true  &&  is_face_in_hull[face1] == true){
+						is_face_in_hull[face0] = false;	
 					}
 					else{
 						is_face_in_hull[face1] = false;
@@ -217,7 +206,7 @@ void compute(){
 	
 					// Edges[j]
 					REP(k,0,2-1){
-						if( Edges[j].get_ith_face_number(k) > -1 && visible[Edges[j].get_ith_face_number(k)] == true ){
+						if( Edges[j].get_ith_face_number(k) > -1 && visible[Edges[j].get_ith_face_number(k)] == true  &&  is_face_in_hull[ Edges[j].get_ith_face_number(k) ] == true ){
 							Edges[j].set_ith_face_number(k, face_counter);
 							break;
 						}
@@ -263,117 +252,162 @@ void compute(){
 				}
 			}
 		}
+		
+		
+		
+		
+		
+		// Czyszczenie
+		visible.clear();
 	}	
 }
 
 
-void save_result(){
-	
-	std::ofstream file_out("out.txt"); // plik wyjsciowy
-	
-	int m = Faces.size(); // liczba scian (nie wszystkie naleza do otoczki)
-	int no_hull_faces = 0; // liczba scian otoczki
-	
-	
-	// Wyznaczenie liczby scian otoczki
-	REP(i,0,m-1){
-		if( is_face_in_hull[i] == true ){
-			++no_hull_faces;
-		}
-	}
-	file_out << no_hull_faces << std::endl;
-	
-	
-	// Wypisanie scian otoczki
-	REP(i,0,m-1){
-		if( is_face_in_hull[i] == true ){
-			file_out << Faces[i] << std::endl;
-		}
-	}
-	
-	file_out.close(); // zamykamy plik wyjsciowy
-}
 
 
 int main(int argc, char** argv){
-	
-	read_data();
-	compute();
-	save_result();
-	
+
+	std::ofstream file_ball_points_incremental("ball_points_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = i * 3000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsBall(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_ball_points_incremental << n << " " << mean_time << std::endl;
+	}
+	file_ball_points_incremental.close();
+
+	std::ofstream file_sphere_points_incremental("sphere_points_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = i * 3000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsSphere(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_sphere_points_incremental << n << " " << mean_time << std::endl;
+	}
+	file_sphere_points_incremental.close();
+
+	std::ofstream file_cube_points_incremental("cube_points_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = i * 3000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsCube(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 1.0);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_cube_points_incremental << n << " " << mean_time << std::endl;
+	}
+	file_cube_points_incremental.close();
+
+
+
+
+
+	std::ofstream file_ball_size_incremental("ball_size_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = 10000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsBall(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3 * i);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_ball_size_incremental << 0.3 * i << " " << mean_time << std::endl;
+	}
+	file_ball_size_incremental.close();
+
+	std::ofstream file_sphere_size_incremental("sphere_size_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = 10000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsSphere(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3 * i);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_sphere_size_incremental << 0.3 * i << " " << mean_time << std::endl;
+	}
+	file_sphere_size_incremental.close();
+
+	std::ofstream file_cube_size_incremental("cube_size_incremental.txt");
+	for (int i = 1; i <= 11; i++) {
+		long long mean_time;
+		int n = 10000;
+		for (int k = 0; k < 5; k++) {
+			Point P[MAX_N];
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+			std::vector<Point> vector = GeneratePointsCube(n, 10.0);
+			std::set<Point> set = Voxelize(vector, 0.3 * i);
+			int j = 0;
+			for (std::set<Point>::iterator it = set.begin(); it != set.end(); ++it) {
+				P[j] = *it;
+				j++;
+			}
+			compute(P, n);
+			std::chrono::duration<float, std::micro> elapsed = std::chrono::high_resolution_clock::now() - start;
+			mean_time += elapsed.count();
+		}
+		mean_time /= 5;
+		file_cube_size_incremental << 0.3 * i << " " << mean_time << std::endl;
+	}
+	file_cube_size_incremental.close();
+
 	return 0;
 }
-
-
-/*
-
-Testy:
-
-
-
-Test #1:
-
-In:
-4
-10 0 0
-0 0 0
-0 10 0
-0 0 10 
-
-
-Out:
-4
-10 0 0 
-0 0 0 
-0 10 0 
-
-10 0 0 
-0 0 0 
-0 0 10 
-
-10 0 0 
-0 10 0 
-0 0 10 
-
-0 0 0 
-0 10 0 
-0 0 10 
-
-
-
-
-Test #2:
-
-In:
-7
-10 0 0
-0 0 0
-0 10 0
-0 0 10
-1 1 1
-0.5 0.5 0.5
-2 2 2
-
-
-Out:
-4
-10 0 0 
-0 0 0 
-0 10 0 
-
-10 0 0 
-0 0 0 
-0 0 10 
-
-10 0 0 
-0 10 0 
-0 0 10 
-
-0 0 0 
-0 10 0 
-0 0 10 
-
-
-
-
-*/

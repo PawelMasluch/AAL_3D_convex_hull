@@ -91,6 +91,7 @@ class Point{
 		
 		// Zapis punktu do pliku
 		friend std::ostream& operator << (std::ostream &out, const Point &P);
+		friend bool operator< (Point const& a, Point const& b);
 };
 
 #endif

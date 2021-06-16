@@ -1,8 +1,8 @@
 # Project: Naive
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP      = g++.exe -std=c++11
+CC       = gcc.exe -std=c++11
 WINDRES  = windres.exe
 OBJ      = main.o Point.o Vector.o Plane.o
 LINKOBJ  = main.o Point.o Vector.o Plane.o

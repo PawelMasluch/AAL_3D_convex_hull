@@ -146,7 +146,7 @@ Vector Vector::operator - (const Vector &a) const{
 // Iloczyn wektorowy this x b
 Vector Vector::operator * (const Vector &b) const{
 	double x = (*this).get_y()*b.get_z() - (*this).get_z()*b.get_y();
-	double y = (*this).get_z()*b.get_x() - (*this).get_x()*b.get_z();
+	double y = -( (*this).get_x()*b.get_z() - (*this).get_z()*b.get_x() );
 	double z = (*this).get_x()*b.get_y() - (*this).get_y()*b.get_x();
 	
 	Vector result(x,y,z);
